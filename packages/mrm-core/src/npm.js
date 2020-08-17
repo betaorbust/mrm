@@ -132,6 +132,9 @@ function runYarn(deps, options = {}, exec) {
  * @param {Record<string, string>} versions
  */
 function getVersionedDep(dep, versions) {
+	if (versions[dep] === null) {
+		return dep;
+	}
 	const version = versions[dep] || 'latest';
 	return `${dep}@${version}`;
 }
@@ -174,6 +177,11 @@ function getUnsatisfiedDeps(deps, versions, options) {
 
 	return deps.filter(dep => {
 		const required = versions[dep];
+
+		// Handle non-registry packages (github, bitbucket, etc.)
+		if (required === null) {
+			return true;
+		}
 
 		if (required && !semver.validRange(required)) {
 			throw new MrmError(

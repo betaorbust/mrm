@@ -231,6 +231,19 @@ describe('install()', () => {
 		expect(fn).not.toThrow('Invalid npm version');
 	});
 
+	it('should not install a set version when version is set to null', () => {
+		const versions = {
+			'github/package': null,
+		};
+		const spawn = jest.fn();
+		install(versions, undefined, spawn);
+		expect(spawn).toBeCalledWith(
+			expect.stringMatching(/npm(\.cmd)?/),
+			['install', '--save-dev', 'github/package'],
+			options
+		);
+	});
+
 	it('should not throw when package.json not found', () => {
 		const spawn = jest.fn();
 		const fn = () => install(modules, undefined, spawn);
